@@ -22,19 +22,38 @@ export type Link = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  post: Link;
+  createLink: Link;
+  updateLink?: Maybe<Link>;
+  deleteLink?: Maybe<Link>;
 };
 
 
-export type MutationPostArgs = {
+export type MutationCreateLinkArgs = {
   url: Scalars['String'];
   description: Scalars['String'];
 };
 
+
+export type MutationUpdateLinkArgs = {
+  id: Scalars['ID'];
+  url?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+};
+
+
+export type MutationDeleteLinkArgs = {
+  id: Scalars['ID'];
+};
+
 export type Query = {
   __typename?: 'Query';
-  info: Scalars['String'];
-  feed: Array<Link>;
+  links: Array<Link>;
+  link?: Maybe<Link>;
+};
+
+
+export type QueryLinkArgs = {
+  id: Scalars['ID'];
 };
 
 
@@ -141,12 +160,14 @@ export type LinkResolvers<ContextType = any, ParentType extends ResolversParentT
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  post?: Resolver<ResolversTypes['Link'], ParentType, ContextType, RequireFields<MutationPostArgs, 'url' | 'description'>>;
+  createLink?: Resolver<ResolversTypes['Link'], ParentType, ContextType, RequireFields<MutationCreateLinkArgs, 'url' | 'description'>>;
+  updateLink?: Resolver<Maybe<ResolversTypes['Link']>, ParentType, ContextType, RequireFields<MutationUpdateLinkArgs, 'id'>>;
+  deleteLink?: Resolver<Maybe<ResolversTypes['Link']>, ParentType, ContextType, RequireFields<MutationDeleteLinkArgs, 'id'>>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  info?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  feed?: Resolver<Array<ResolversTypes['Link']>, ParentType, ContextType>;
+  links?: Resolver<Array<ResolversTypes['Link']>, ParentType, ContextType>;
+  link?: Resolver<Maybe<ResolversTypes['Link']>, ParentType, ContextType, RequireFields<QueryLinkArgs, 'id'>>;
 };
 
 export type Resolvers<ContextType = any> = {
