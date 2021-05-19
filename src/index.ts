@@ -1,62 +1,86 @@
 import fs from "fs";
 import path from "path";
+import { PrismaClient } from "@prisma/client";
 import { ApolloServer } from "apollo-server";
-import { Link, Resolvers } from "./generated/graphql";
 
-let links: Link[] = [
-  {
-    id: "link-0",
-    url: "www.howtographql.com",
-    description: "Fullstack tutorial for GraphQL",
-  },
-];
+import { Resolvers } from "./generated/graphql";
 
-let idCount = links.length;
+interface Context {
+  prisma: PrismaClient;
+}
 
-const resolvers: Resolvers = {
+const context: Context = {
+  prisma: new PrismaClient(),
+};
+
+// TODO abstract id to string logic
+const resolvers: Resolvers<Context> = {
   Query: {
-    links: () => links,
-    link: (_, args) => {
-      return links.find((link) => link.id === args.id) || null;
+    links: async (_, __, context) => {
+      const links = await context.prisma.link.findMany();
+      return links.map((link) => ({ ...link, id: link.id.toString() }));
+    },
+    link: async (_, args, context) => {
+      const link = await context.prisma.link.findUnique({
+        where: {
+          id: parseInt(args.id, 10),
+        },
+      });
+
+      return link ? { ...link, id: link.id.toString() } : null;
     },
   },
   Mutation: {
-    createLink: (_, args) => {
-      const newLink: Link = {
-        id: `link-${idCount++}`,
-        description: args.description,
-        url: args.url,
-      };
-      links.push(newLink);
-      return newLink;
+    createLink: async (_, args, context) => {
+      const newLink = await context.prisma.link.create({
+        data: args,
+      });
+
+      return { ...newLink, id: newLink.id.toString() };
     },
-    updateLink: (_, args) => {
-      const target = links.find((link) => link.id === args.id);
+    updateLink: async (_, args, context) => {
+      try {
+        const updatedLink = await context.prisma.link.update({
+          data: {
+            description: args.description ?? undefined,
+            url: args.url ?? undefined,
+          },
+          where: {
+            id: parseInt(args.id, 10),
+          },
+        });
 
-      if (!target) {
-        return null;
+        return { ...updatedLink, id: updatedLink.id.toString() };
+      } catch (e) {
+        if (
+          e instanceof Error &&
+          e.message.includes(prismaRecordToUpdateNotFound)
+        ) {
+          return null;
+        } else {
+          throw e;
+        }
       }
-
-      const updatedLink: Link = {
-        ...target,
-        description: args.description || target.description,
-        url: args.url || target.url,
-      };
-
-      links = links.map((link) => (link.id === args.id ? updatedLink : link));
-
-      return updatedLink;
     },
-    deleteLink: (_, args) => {
-      const target = links.find((link) => link.id === args.id);
+    deleteLink: async (_, args, context) => {
+      try {
+        const target = await context.prisma.link.delete({
+          where: {
+            id: parseInt(args.id, 10),
+          },
+        });
 
-      if (!target) {
-        return null;
+        return { ...target, id: target.id.toString() };
+      } catch (e) {
+        if (
+          e instanceof Error &&
+          e.message.includes(prismaRecordToDeleteNotFound)
+        ) {
+          return null;
+        } else {
+          throw e;
+        }
       }
-
-      links = links.filter((link) => link.id !== args.id);
-
-      return target;
     },
   },
 };
@@ -64,6 +88,10 @@ const resolvers: Resolvers = {
 const server = new ApolloServer({
   typeDefs: fs.readFileSync(path.join(__dirname, "schema.graphql"), "utf-8"),
   resolvers,
+  context,
 });
 
 server.listen().then(({ url }) => console.log(`Server is running on ${url}`));
+
+const prismaRecordToUpdateNotFound = "Record to update not found.";
+const prismaRecordToDeleteNotFound = "Record to delete does not exist.";
