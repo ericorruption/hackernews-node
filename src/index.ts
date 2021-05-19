@@ -9,10 +9,14 @@ import type { Context } from "./context";
 import { context } from "./context";
 import { queryResolvers } from "./resolvers/Query";
 import { mutationResolvers } from "./resolvers/Mutation";
+import { linkResolvers } from "./resolvers/Link";
+import { userResolvers } from "./resolvers/User";
 
 const resolvers: Resolvers<Context> = {
   Query: queryResolvers,
   Mutation: mutationResolvers,
+  Link: linkResolvers,
+  User: userResolvers,
 };
 
 const server = new ApolloServer({
