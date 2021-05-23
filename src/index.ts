@@ -11,10 +11,12 @@ import { queryResolvers } from "./resolvers/Query";
 import { mutationResolvers } from "./resolvers/Mutation";
 import { linkResolvers } from "./resolvers/Link";
 import { userResolvers } from "./resolvers/User";
+import { subscriptionResolvers } from "./resolvers/Subscription";
 
 const resolvers: Resolvers<Context> = {
   Query: queryResolvers,
   Mutation: mutationResolvers,
+  Subscription: subscriptionResolvers,
   Link: linkResolvers,
   User: userResolvers,
 };

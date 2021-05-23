@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 
 import { Context } from "../context";
 import { MutationResolvers, User } from "../generated/graphql";
+import { newLinkTrigger } from "./Subscription";
 
 type Resolvers = MutationResolvers<Context>;
 
@@ -27,6 +28,8 @@ const createLink: Resolvers["createLink"] = async (_, args, context) => {
       },
     },
   });
+
+  context.pubSub.publish(newLinkTrigger, newLink);
 
   return { ...newLink, id: newLink.id.toString() };
 };
