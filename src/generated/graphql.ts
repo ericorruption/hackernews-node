@@ -20,6 +20,12 @@ export type AuthPayload = {
   user?: Maybe<User>;
 };
 
+export type Feed = {
+  __typename?: 'Feed';
+  links: Array<Link>;
+  count: Scalars['Int'];
+};
+
 export type Link = {
   __typename?: 'Link';
   id: Scalars['ID'];
@@ -83,12 +89,12 @@ export type MutationVoteArgs = {
 
 export type Query = {
   __typename?: 'Query';
-  links: Array<Link>;
+  feed: Feed;
   link?: Maybe<Link>;
 };
 
 
-export type QueryLinksArgs = {
+export type QueryFeedArgs = {
   filter?: Maybe<Scalars['String']>;
   skip?: Maybe<Scalars['Int']>;
   take?: Maybe<Scalars['Int']>;
@@ -206,12 +212,13 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 export type ResolversTypes = {
   AuthPayload: ResolverTypeWrapper<AuthPayload>;
   String: ResolverTypeWrapper<Scalars['String']>;
+  Feed: ResolverTypeWrapper<Feed>;
+  Int: ResolverTypeWrapper<Scalars['Int']>;
   Link: ResolverTypeWrapper<Link>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
   LinksOrderByInput: LinksOrderByInput;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
-  Int: ResolverTypeWrapper<Scalars['Int']>;
   Sort: Sort;
   Subscription: ResolverTypeWrapper<{}>;
   User: ResolverTypeWrapper<User>;
@@ -223,12 +230,13 @@ export type ResolversTypes = {
 export type ResolversParentTypes = {
   AuthPayload: AuthPayload;
   String: Scalars['String'];
+  Feed: Feed;
+  Int: Scalars['Int'];
   Link: Link;
   ID: Scalars['ID'];
   LinksOrderByInput: LinksOrderByInput;
   Mutation: {};
   Query: {};
-  Int: Scalars['Int'];
   Subscription: {};
   User: User;
   Vote: Vote;
@@ -238,6 +246,12 @@ export type ResolversParentTypes = {
 export type AuthPayloadResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AuthPayload'] = ResolversParentTypes['AuthPayload']> = {
   token?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type FeedResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Feed'] = ResolversParentTypes['Feed']> = {
+  links?: Resolver<Array<ResolversTypes['Link']>, ParentType, ContextType>;
+  count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -260,7 +274,7 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
 };
 
 export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  links?: Resolver<Array<ResolversTypes['Link']>, ParentType, ContextType, RequireFields<QueryLinksArgs, never>>;
+  feed?: Resolver<ResolversTypes['Feed'], ParentType, ContextType, RequireFields<QueryFeedArgs, never>>;
   link?: Resolver<Maybe<ResolversTypes['Link']>, ParentType, ContextType, RequireFields<QueryLinkArgs, 'id'>>;
 };
 
@@ -286,6 +300,7 @@ export type VoteResolvers<ContextType = Context, ParentType extends ResolversPar
 
 export type Resolvers<ContextType = Context> = {
   AuthPayload?: AuthPayloadResolvers<ContextType>;
+  Feed?: FeedResolvers<ContextType>;
   Link?: LinkResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;

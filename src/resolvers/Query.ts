@@ -1,17 +1,20 @@
+import type { Prisma } from "@prisma/client";
 import { QueryResolvers } from "../generated/graphql";
 
 // TODO abstract id to string logic
 export const queryResolvers: QueryResolvers = {
-  links: async (_, args, context) => {
+  feed: async (_, args, context) => {
+    const where: Prisma.LinkWhereInput = args.filter
+      ? {
+          OR: [
+            { description: { contains: args.filter } },
+            { url: { contains: args.filter } },
+          ],
+        }
+      : {};
+
     const links = await context.prisma.link.findMany({
-      where: args.filter
-        ? {
-            OR: [
-              { description: { contains: args.filter } },
-              { url: { contains: args.filter } },
-            ],
-          }
-        : {},
+      where,
       skip: args.skip ?? undefined,
       take: args.take ?? undefined,
       // TODO deal with input with more than one argument
@@ -21,11 +24,17 @@ export const queryResolvers: QueryResolvers = {
         url: args.orderBy?.url ?? undefined,
       },
     });
-    return links.map((link) => ({
-      ...link,
-      id: link.id.toString(),
-      votes: [],
-    }));
+
+    const count = await context.prisma.link.count({ where });
+
+    return {
+      links: links.map((link) => ({
+        ...link,
+        id: link.id.toString(),
+        votes: [],
+      })),
+      count,
+    };
   },
   link: async (_, args, context) => {
     const link = await context.prisma.link.findUnique({
