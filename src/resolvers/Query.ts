@@ -14,6 +14,12 @@ export const queryResolvers: QueryResolvers = {
         : {},
       skip: args.skip ?? undefined,
       take: args.take ?? undefined,
+      // TODO deal with input with more than one argument
+      orderBy: {
+        createdAt: args.orderBy?.createdAt ?? undefined,
+        description: args.orderBy?.description ?? undefined,
+        url: args.orderBy?.url ?? undefined,
+      },
     });
     return links.map((link) => ({
       ...link,

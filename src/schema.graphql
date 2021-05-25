@@ -1,6 +1,22 @@
 type Query {
-  links(filter: String, skip: Int, take: Int): [Link!]!
+  links(
+    filter: String
+    skip: Int
+    take: Int
+    orderBy: LinksOrderByInput
+  ): [Link!]!
   link(id: ID!): Link
+}
+
+input LinksOrderByInput {
+  description: Sort
+  url: Sort
+  createdAt: Sort
+}
+
+enum Sort {
+  asc
+  desc
 }
 
 type Mutation {

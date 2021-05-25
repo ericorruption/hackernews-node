@@ -29,6 +29,12 @@ export type Link = {
   votes: Array<Vote>;
 };
 
+export type LinksOrderByInput = {
+  description?: Maybe<Sort>;
+  url?: Maybe<Sort>;
+  createdAt?: Maybe<Sort>;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   createLink: Link;
@@ -86,12 +92,18 @@ export type QueryLinksArgs = {
   filter?: Maybe<Scalars['String']>;
   skip?: Maybe<Scalars['Int']>;
   take?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<LinksOrderByInput>;
 };
 
 
 export type QueryLinkArgs = {
   id: Scalars['ID'];
 };
+
+export enum Sort {
+  Asc = 'asc',
+  Desc = 'desc'
+}
 
 export type Subscription = {
   __typename?: 'Subscription';
@@ -196,9 +208,11 @@ export type ResolversTypes = {
   String: ResolverTypeWrapper<Scalars['String']>;
   Link: ResolverTypeWrapper<Link>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
+  LinksOrderByInput: LinksOrderByInput;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
+  Sort: Sort;
   Subscription: ResolverTypeWrapper<{}>;
   User: ResolverTypeWrapper<User>;
   Vote: ResolverTypeWrapper<Vote>;
@@ -211,6 +225,7 @@ export type ResolversParentTypes = {
   String: Scalars['String'];
   Link: Link;
   ID: Scalars['ID'];
+  LinksOrderByInput: LinksOrderByInput;
   Mutation: {};
   Query: {};
   Int: Scalars['Int'];
