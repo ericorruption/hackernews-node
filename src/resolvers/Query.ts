@@ -4,7 +4,11 @@ import { QueryResolvers } from "../generated/graphql";
 export const queryResolvers: QueryResolvers = {
   links: async (_, __, context) => {
     const links = await context.prisma.link.findMany();
-    return links.map((link) => ({ ...link, id: link.id.toString() }));
+    return links.map((link) => ({
+      ...link,
+      id: link.id.toString(),
+      votes: [],
+    }));
   },
   link: async (_, args, context) => {
     const link = await context.prisma.link.findUnique({
@@ -13,6 +17,6 @@ export const queryResolvers: QueryResolvers = {
       },
     });
 
-    return link ? { ...link, id: link.id.toString() } : null;
+    return link ? { ...link, id: link.id.toString(), votes: [] } : null;
   },
 };

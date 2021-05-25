@@ -26,6 +26,7 @@ export type Link = {
   description: Scalars['String'];
   url: Scalars['String'];
   postedBy?: Maybe<User>;
+  votes: Array<Vote>;
 };
 
 export type Mutation = {
@@ -35,6 +36,7 @@ export type Mutation = {
   deleteLink?: Maybe<Link>;
   signup?: Maybe<AuthPayload>;
   login?: Maybe<AuthPayload>;
+  vote?: Maybe<Vote>;
 };
 
 
@@ -68,6 +70,11 @@ export type MutationLoginArgs = {
   password: Scalars['String'];
 };
 
+
+export type MutationVoteArgs = {
+  linkId: Scalars['ID'];
+};
+
 export type Query = {
   __typename?: 'Query';
   links: Array<Link>;
@@ -82,6 +89,7 @@ export type QueryLinkArgs = {
 export type Subscription = {
   __typename?: 'Subscription';
   newLink?: Maybe<Link>;
+  newVote?: Maybe<Vote>;
 };
 
 export type User = {
@@ -90,6 +98,13 @@ export type User = {
   name: Scalars['String'];
   email: Scalars['String'];
   links: Array<Link>;
+};
+
+export type Vote = {
+  __typename?: 'Vote';
+  id: Scalars['ID'];
+  link: Link;
+  user: User;
 };
 
 
@@ -178,6 +193,7 @@ export type ResolversTypes = {
   Query: ResolverTypeWrapper<{}>;
   Subscription: ResolverTypeWrapper<{}>;
   User: ResolverTypeWrapper<User>;
+  Vote: ResolverTypeWrapper<Vote>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
 };
 
@@ -191,6 +207,7 @@ export type ResolversParentTypes = {
   Query: {};
   Subscription: {};
   User: User;
+  Vote: Vote;
   Boolean: Scalars['Boolean'];
 };
 
@@ -205,6 +222,7 @@ export type LinkResolvers<ContextType = Context, ParentType extends ResolversPar
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   postedBy?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  votes?: Resolver<Array<ResolversTypes['Vote']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -214,6 +232,7 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
   deleteLink?: Resolver<Maybe<ResolversTypes['Link']>, ParentType, ContextType, RequireFields<MutationDeleteLinkArgs, 'id'>>;
   signup?: Resolver<Maybe<ResolversTypes['AuthPayload']>, ParentType, ContextType, RequireFields<MutationSignupArgs, 'email' | 'password' | 'name'>>;
   login?: Resolver<Maybe<ResolversTypes['AuthPayload']>, ParentType, ContextType, RequireFields<MutationLoginArgs, 'email' | 'password'>>;
+  vote?: Resolver<Maybe<ResolversTypes['Vote']>, ParentType, ContextType, RequireFields<MutationVoteArgs, 'linkId'>>;
 };
 
 export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
@@ -223,6 +242,7 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
 
 export type SubscriptionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Subscription'] = ResolversParentTypes['Subscription']> = {
   newLink?: SubscriptionResolver<Maybe<ResolversTypes['Link']>, "newLink", ParentType, ContextType>;
+  newVote?: SubscriptionResolver<Maybe<ResolversTypes['Vote']>, "newVote", ParentType, ContextType>;
 };
 
 export type UserResolvers<ContextType = Context, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
@@ -233,6 +253,13 @@ export type UserResolvers<ContextType = Context, ParentType extends ResolversPar
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type VoteResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Vote'] = ResolversParentTypes['Vote']> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  link?: Resolver<ResolversTypes['Link'], ParentType, ContextType>;
+  user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type Resolvers<ContextType = Context> = {
   AuthPayload?: AuthPayloadResolvers<ContextType>;
   Link?: LinkResolvers<ContextType>;
@@ -240,6 +267,7 @@ export type Resolvers<ContextType = Context> = {
   Query?: QueryResolvers<ContextType>;
   Subscription?: SubscriptionResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
+  Vote?: VoteResolvers<ContextType>;
 };
 
 

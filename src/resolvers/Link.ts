@@ -8,4 +8,13 @@ export const linkResolvers: LinkResolvers = {
 
     return user ? { ...user, id: user.id.toString(), links: [] } : null;
   },
+  // @ts-ignore
+  votes: (parent, _, context) =>
+    context.prisma.link
+      .findUnique({
+        where: {
+          id: parseInt(parent.id, 10),
+        },
+      })
+      .votes(),
 };

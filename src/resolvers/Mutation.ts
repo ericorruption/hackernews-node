@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-import { MutationResolvers, User } from "../generated/graphql";
+import { MutationResolvers, User, Vote } from "../generated/graphql";
 import { newLinkTrigger, newVoteTrigger } from "./Subscription";
 
 const APP_SECRET = process.env.APP_SECRET;
@@ -32,7 +32,7 @@ const createLink: MutationResolvers["createLink"] = async (
 
   context.pubSub.publish(newLinkTrigger, newLink);
 
-  return { ...newLink, id: newLink.id.toString() };
+  return { ...newLink, id: newLink.id.toString(), votes: [] };
 };
 
 const updateLink: MutationResolvers["updateLink"] = async (
@@ -51,7 +51,7 @@ const updateLink: MutationResolvers["updateLink"] = async (
       },
     });
 
-    return { ...updatedLink, id: updatedLink.id.toString() };
+    return { ...updatedLink, id: updatedLink.id.toString(), votes: [] };
   } catch (e) {
     if (
       e instanceof Error &&
@@ -76,7 +76,7 @@ const deleteLink: MutationResolvers["deleteLink"] = async (
       },
     });
 
-    return { ...target, id: target.id.toString() };
+    return { ...target, id: target.id.toString(), votes: [] };
   } catch (e) {
     if (
       e instanceof Error &&
@@ -133,12 +133,52 @@ const login: MutationResolvers["login"] = async (_, args, context) => {
   };
 };
 
-export const mutationResolvers: Resolvers = {
+const vote: MutationResolvers["vote"] = async (_, args, context) => {
+  if (!context.userId) {
+    throw new Error("Unauthorized");
+  }
+
+  const userId = parseInt(context.userId, 10);
+
+  const existingVote = await context.prisma.vote.findUnique({
+    where: {
+      linkId_userId: {
+        linkId: parseInt(args.linkId, 10),
+        userId,
+      },
+    },
+  });
+
+  if (existingVote) {
+    throw new Error(`Already voted for link: ${args.linkId}`);
+  }
+
+  const newVote = await context.prisma.vote.create({
+    data: {
+      user: {
+        connect: { id: userId },
+      },
+      link: {
+        connect: { id: parseInt(args.linkId, 10) },
+      },
+    },
+  });
+
+  context.pubSub.publish(newVoteTrigger, newVote);
+
+  // @ts-ignore
+  const vote: Vote = { ...newVote };
+
+  return vote;
+};
+
+export const mutationResolvers: MutationResolvers = {
   createLink,
   updateLink,
   deleteLink,
   signup,
   login,
+  vote,
 };
 
 const prismaRecordToUpdateNotFound = "Record to update not found.";

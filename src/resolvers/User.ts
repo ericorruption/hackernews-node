@@ -6,6 +6,10 @@ export const userResolvers: UserResolvers = {
       .findUnique({ where: { id: parseInt(parent.id, 10) } })
       .links();
 
-    return links.map((link) => ({ ...link, id: link.id.toString() }));
+    return links.map((link) => ({
+      ...link,
+      id: link.id.toString(),
+      votes: [],
+    }));
   },
 };

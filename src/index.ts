@@ -11,6 +11,7 @@ import { mutationResolvers } from "./resolvers/Mutation";
 import { linkResolvers } from "./resolvers/Link";
 import { userResolvers } from "./resolvers/User";
 import { subscriptionResolvers } from "./resolvers/Subscription";
+import { voteResolvers } from "./resolvers/Vote";
 
 const resolvers: Resolvers = {
   Query: queryResolvers,
@@ -18,6 +19,7 @@ const resolvers: Resolvers = {
   Subscription: subscriptionResolvers,
   Link: linkResolvers,
   User: userResolvers,
+  Vote: voteResolvers,
 };
 
 const server = new ApolloServer({
