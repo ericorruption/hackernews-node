@@ -12,6 +12,8 @@ export const queryResolvers: QueryResolvers = {
             ],
           }
         : {},
+      skip: args.skip ?? undefined,
+      take: args.take ?? undefined,
     });
     return links.map((link) => ({
       ...link,

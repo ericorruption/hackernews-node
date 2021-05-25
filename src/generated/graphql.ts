@@ -84,6 +84,8 @@ export type Query = {
 
 export type QueryLinksArgs = {
   filter?: Maybe<Scalars['String']>;
+  skip?: Maybe<Scalars['Int']>;
+  take?: Maybe<Scalars['Int']>;
 };
 
 
@@ -196,6 +198,7 @@ export type ResolversTypes = {
   ID: ResolverTypeWrapper<Scalars['ID']>;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
+  Int: ResolverTypeWrapper<Scalars['Int']>;
   Subscription: ResolverTypeWrapper<{}>;
   User: ResolverTypeWrapper<User>;
   Vote: ResolverTypeWrapper<Vote>;
@@ -210,6 +213,7 @@ export type ResolversParentTypes = {
   ID: Scalars['ID'];
   Mutation: {};
   Query: {};
+  Int: Scalars['Int'];
   Subscription: {};
   User: User;
   Vote: Vote;
