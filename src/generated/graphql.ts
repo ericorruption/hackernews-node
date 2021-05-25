@@ -82,6 +82,11 @@ export type Query = {
 };
 
 
+export type QueryLinksArgs = {
+  filter?: Maybe<Scalars['String']>;
+};
+
+
 export type QueryLinkArgs = {
   id: Scalars['ID'];
 };
@@ -236,7 +241,7 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
 };
 
 export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  links?: Resolver<Array<ResolversTypes['Link']>, ParentType, ContextType>;
+  links?: Resolver<Array<ResolversTypes['Link']>, ParentType, ContextType, RequireFields<QueryLinksArgs, never>>;
   link?: Resolver<Maybe<ResolversTypes['Link']>, ParentType, ContextType, RequireFields<QueryLinkArgs, 'id'>>;
 };
 

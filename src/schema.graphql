@@ -1,5 +1,5 @@
 type Query {
-  links: [Link!]!
+  links(filter: String): [Link!]!
   link(id: ID!): Link
 }
 
