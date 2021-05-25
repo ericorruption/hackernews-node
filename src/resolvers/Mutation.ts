@@ -1,11 +1,8 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-import { Context } from "../context";
 import { MutationResolvers, User } from "../generated/graphql";
-import { newLinkTrigger } from "./Subscription";
-
-type Resolvers = MutationResolvers<Context>;
+import { newLinkTrigger, newVoteTrigger } from "./Subscription";
 
 const APP_SECRET = process.env.APP_SECRET;
 
@@ -14,7 +11,11 @@ if (!APP_SECRET) {
 }
 
 // TODO replace prisma ID with String  @id @default(cuid())
-const createLink: Resolvers["createLink"] = async (_, args, context) => {
+const createLink: MutationResolvers["createLink"] = async (
+  _,
+  args,
+  context
+) => {
   if (!context.userId) {
     throw new Error("Unauthorized");
   }
@@ -34,7 +35,11 @@ const createLink: Resolvers["createLink"] = async (_, args, context) => {
   return { ...newLink, id: newLink.id.toString() };
 };
 
-const updateLink: Resolvers["updateLink"] = async (_, args, context) => {
+const updateLink: MutationResolvers["updateLink"] = async (
+  _,
+  args,
+  context
+) => {
   try {
     const updatedLink = await context.prisma.link.update({
       data: {
@@ -59,7 +64,11 @@ const updateLink: Resolvers["updateLink"] = async (_, args, context) => {
   }
 };
 
-const deleteLink: Resolvers["deleteLink"] = async (_, args, context) => {
+const deleteLink: MutationResolvers["deleteLink"] = async (
+  _,
+  args,
+  context
+) => {
   try {
     const target = await context.prisma.link.delete({
       where: {
@@ -80,7 +89,7 @@ const deleteLink: Resolvers["deleteLink"] = async (_, args, context) => {
   }
 };
 
-const signup: Resolvers["signup"] = async (_, args, context) => {
+const signup: MutationResolvers["signup"] = async (_, args, context) => {
   const password = await bcrypt.hash(args.password, 10);
   const dbUser = await context.prisma.user.create({
     data: {
@@ -99,7 +108,7 @@ const signup: Resolvers["signup"] = async (_, args, context) => {
   };
 };
 
-const login: Resolvers["login"] = async (_, args, context) => {
+const login: MutationResolvers["login"] = async (_, args, context) => {
   const dbUser = await context.prisma.user.findUnique({
     where: { email: args.email },
   });

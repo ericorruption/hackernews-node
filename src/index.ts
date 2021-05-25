@@ -5,7 +5,6 @@ import path from "path";
 import { ApolloServer } from "apollo-server";
 
 import type { Resolvers } from "./generated/graphql";
-import type { Context } from "./context";
 import { context } from "./context";
 import { queryResolvers } from "./resolvers/Query";
 import { mutationResolvers } from "./resolvers/Mutation";
@@ -13,7 +12,7 @@ import { linkResolvers } from "./resolvers/Link";
 import { userResolvers } from "./resolvers/User";
 import { subscriptionResolvers } from "./resolvers/Subscription";
 
-const resolvers: Resolvers<Context> = {
+const resolvers: Resolvers = {
   Query: queryResolvers,
   Mutation: mutationResolvers,
   Subscription: subscriptionResolvers,
