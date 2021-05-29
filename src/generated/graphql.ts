@@ -1,4 +1,4 @@
-import { GraphQLResolveInfo } from 'graphql';
+import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
 import { Context } from '../context';
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -12,6 +12,7 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  DateTime: any;
 };
 
 export type AuthPayload = {
@@ -19,6 +20,7 @@ export type AuthPayload = {
   token?: Maybe<Scalars['String']>;
   user?: Maybe<User>;
 };
+
 
 export type Feed = {
   __typename?: 'Feed';
@@ -33,6 +35,7 @@ export type Link = {
   url: Scalars['String'];
   postedBy?: Maybe<User>;
   votes: Array<Vote>;
+  createdAt: Scalars['DateTime'];
 };
 
 export type LinksOrderByInput = {
@@ -212,6 +215,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 export type ResolversTypes = {
   AuthPayload: ResolverTypeWrapper<AuthPayload>;
   String: ResolverTypeWrapper<Scalars['String']>;
+  DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
   Feed: ResolverTypeWrapper<Feed>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   Link: ResolverTypeWrapper<Link>;
@@ -230,6 +234,7 @@ export type ResolversTypes = {
 export type ResolversParentTypes = {
   AuthPayload: AuthPayload;
   String: Scalars['String'];
+  DateTime: Scalars['DateTime'];
   Feed: Feed;
   Int: Scalars['Int'];
   Link: Link;
@@ -249,6 +254,10 @@ export type AuthPayloadResolvers<ContextType = Context, ParentType extends Resol
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {
+  name: 'DateTime';
+}
+
 export type FeedResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Feed'] = ResolversParentTypes['Feed']> = {
   links?: Resolver<Array<ResolversTypes['Link']>, ParentType, ContextType>;
   count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -261,6 +270,7 @@ export type LinkResolvers<ContextType = Context, ParentType extends ResolversPar
   url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   postedBy?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   votes?: Resolver<Array<ResolversTypes['Vote']>, ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -300,6 +310,7 @@ export type VoteResolvers<ContextType = Context, ParentType extends ResolversPar
 
 export type Resolvers<ContextType = Context> = {
   AuthPayload?: AuthPayloadResolvers<ContextType>;
+  DateTime?: GraphQLScalarType;
   Feed?: FeedResolvers<ContextType>;
   Link?: LinkResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
